@@ -1,0 +1,101 @@
+{% extends 'base.html' %} 
+{% load static %}
+{% load humanize %}
+{% block head_title %} Transaction Report{% endblock %} {% block content %}
+
+{% for message in messages %}
+
+<div class="bg-teal-100 border-t-4 border-teal-500 rounded-b text-teal-900 px-4 py-3 shadow-md mt-2" role="alert">
+    <div class="flex">
+        <div class="py-1"><svg class="fill-current h-6 w-6 text-teal-500 mr-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M2.93 17.07A10 10 0 1 1 17.07 2.93 10 10 0 0 1 2.93 17.07zm12.73-1.41A8 8 0 1 0 4.34 4.34a8 8 0 0 0 11.32 11.32zM9 11V9h2v6H9v-4zm0-6h2v2H9V5z"/></svg></div>
+        <div>
+            <p class="font-bold">Success!</p>
+            <p class="text-sm">{{ message }}</p>
+        </div>
+    </div>
+</div>
+
+{% endfor %}
+
+<div class="my-10 py-3 px-4 bg-white rounded-xl shadow-md">
+  <h1 class="font-bold text-3xl text-center pb-5 pt-2">Transaction Report</h1>
+  <hr />
+  <form method="get" action="{% url 'transaction_report' %}">
+    <div class="flex justify-center">
+      <div
+        class="mt-10 pl-3 pr-2 bg-white border rounded-md border-gray-500 flex justify-between items-center relative w-4/12 mx-2"
+      >
+        <label for="start_date">From:</label>
+        <input
+          class="appearance-none w-full outline-none focus:outline-none active:outline-none"
+          type="date"
+          id="start_date"
+          name="start_date"
+        />
+      </div>
+ 
+      <div
+        class="mt-10 pl-3 pr-2 bg-white border rounded-md border-gray-500 flex justify-between items-center relative w-4/12"
+      >
+        <label for="end_date">To:</label>
+        <input
+          class="appearance-none w-full outline-none focus:outline-none active:outline-none"
+          type="date"
+          id="end_date"
+          name="end_date"
+        />
+      </div>
+      <div class="mt-10 pl-3 pr-2 flex justify-between items-center relative w-4/12">
+        <button
+          class="bg-blue-900 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+          type="submit"
+        >
+          Filter
+        </button>
+      </div>
+    </div>
+  </form>
+  <table
+    class="table-auto mx-auto w-full px-5 rounded-xl mt-8 border dark:border-neutral-500"
+  >
+    <thead class="bg-purple-900 text-white text-left">
+      <tr
+        class="bg-gradient-to-tr from-indigo-600 to-purple-600 rounded-md py-2 px-4 text-white font-bold"
+      >
+        <th class="px-4 py-2">Date</th>
+        <th class="px-4 py-2">Transaction Type</th>
+        <th class="px-4 py-2">Amount</th>
+        <th class="px-4 py-2">Balance After Transaction</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for transaction in object_list %}
+      <tr class="border-b dark:border-neutral-500">
+        <td class="px-4 py-2">
+          {{ transaction.timestamp|date:"F d, Y h:i A" }}
+        </td>
+        <td class="px-4 py-3 text-s border">
+          <span
+            class="px-2 py-1 font-bold leading-tight rounded-sm {% if transaction.get_transaction_type_display == 'Withdrawl' %} text-red-700 bg-red-100 {% else %} text-green-700 bg-green-100 {% endif %}"
+          >
+            {{ transaction.get_transaction_type_display }}
+          </span>
+        </td>
+        <td class="px-4 py-2">
+          $ {{ transaction.amount|floatformat:2|intcomma }}
+        </td>
+        <td class="px-4 py-2">
+          $ {{ transaction.balance_after_transaction|floatformat:2|intcomma }}
+        </td>
+      </tr>
+      {% endfor %}
+      <tr class="bg-gray-800 text-white">
+        <th class="px-4 py-2 text-right" colspan="3">Current Balance</th>
+        <th class="px-4 py-2 text-left">
+          $ {{ account.balance|floatformat:2|intcomma }}
+        </th>
+      </tr>
+    </tbody>
+  </table>
+</div>
+{% endblock %}
