@@ -8,7 +8,7 @@ from django.views import View
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .models import Transaction
 from .forms import DepositForm, LoanRequest, WithdrawlForm, TransactionForm, TransferForm
-from accounts.models import Bank_Status
+from accounts.models import Bank_Status, UserBankAcoount
 from .constants import DEPOSIT,WITHDRAWL,LOAN,LOAN_PAID, TRANSFER
 from django.urls import reverse_lazy
 from django.shortcuts import get_object_or_404
@@ -172,7 +172,8 @@ class LoanListView(LoginRequiredMixin,ListView):
         user_account = self.request.user.account 
         queryset = Transaction.objects.filter(account=self.request.user.account, transaction_type=3)
         return queryset
-
+    
+    
 class MoneyTransfer(TransactionCreateMaxin):
     form_class = TransferForm
     title ='Money Transfer'
@@ -192,12 +193,8 @@ class MoneyTransfer(TransactionCreateMaxin):
             
             destination_account.balance += amount
             destination_account.save(update_fields =['balance'])            
-        
+        send_transaction_email(self.request.user, amount, "Send Money", 'send_money.html')
+
+        send_transaction_email(destination_account.user, amount, "Receive Money", 'send_money.html')           
         messages.success(self.request, f'Successfully transferred {amount}$ to {destination_account}.')
         return super().form_valid(form)
-    
-
-    
-                    
-
-    
