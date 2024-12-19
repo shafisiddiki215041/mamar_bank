@@ -115,7 +115,7 @@ WSGI_APPLICATION = 'mamar_Bank.wsgi.application'
 # Replace the SQLite DATABASES configuration with PostgreSQL:
 DATABASES = {
     'default': dj_database_url.config(             
-        default='postgresql://mamar_bank_qjnr_user:EFcsuBG3lC2L08NqHAVjSvffRCv7VJ9F@dpg-crts601u0jms73brj760-a.oregon-postgres.render.com/mamar_bank_qjnr', 
+        default='postgresql://mamar_bank_3zkl_user:v0C4hboCTrg4E6ruwncieMR57a7bbmhb@dpg-cthou9aj1k6c739femh0-a.oregon-postgres.render.com/mamar_bank_3zkl', 
     )
 }
 
